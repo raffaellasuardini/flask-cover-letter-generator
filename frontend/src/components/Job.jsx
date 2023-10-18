@@ -1,11 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 
-function Job() {
-  const [jobDescription, setJobDescription] = useState("");
-
+function Job(props) {
   return (
     <React.Fragment>
       <Grid
@@ -24,13 +22,15 @@ function Job() {
         </Grid>
         <Grid item xs={12}>
           <TextField
+            fullWidth
             required
-            id="job-description"
+            id="job"
+            name="job"
             multiline
             rows={6}
             placeholder="Inserisci il testo della job description per cui vuoi candidarti.
             "
-            fullWidth
+            onChange={(e) => props.setContent(e.target.value)}
           />
         </Grid>
       </Grid>

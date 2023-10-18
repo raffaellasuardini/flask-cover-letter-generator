@@ -9,12 +9,20 @@ import Step from "@mui/material/Step";
 import Start from "./Start";
 import Job from "./Job";
 import Cv from "./Cv";
+import Letter from "./Letter";
 
 function Form() {
   const steps = ["Job description", "Your skill"];
   const [activeStep, setActiveStep] = useState(-1);
+  const [curriculum, setCurriculum] = useState("");
+  const [jobDescription, setJobDescription] = useState("");
+  const [coverLetter, setCoverLetter] = useState("");
+
   const handleNext = () => {
     setActiveStep(activeStep + 1);
+    if (activeStep === steps.length - 1) {
+      handleSubmit();
+    }
   };
 
   const handleBack = () => {
@@ -25,15 +33,32 @@ function Form() {
     if (step < 0) {
       return <Start></Start>;
     } else if (step === 0) {
-      return <Job></Job>;
+      return <Job setContent={setJobDescription}></Job>;
     } else if (step === 1) {
-      return <Cv></Cv>;
+      return <Cv setContent={setCurriculum}></Cv>;
     }
+  }
+
+  function handleSubmit() {
+    const FLASK_ENDPOINT = "http://localhost:5000";
+
+    return fetch(FLASK_ENDPOINT + "/api/letter", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ cv: curriculum, job: jobDescription }),
+    })
+      .then((response) => response.text())
+      .then((response) => {
+        console.log(response);
+        setCoverLetter(response);
+      })
+
+      .catch((err) => console.error(err));
   }
 
   return (
     <Paper variant="outlined" square={false}>
-      <Grid contaier xs={12} p={2}>
+      <Grid item xs={12} p={2}>
         <Grid item>
           <Typography component="h1" variant="h4" align="center">
             Cover letter generator
@@ -48,32 +73,39 @@ function Form() {
             ))}
           </Stepper>
         </Grid>
-        {chooseContent(activeStep)}
-        <Grid
-          item
-          container
-          direction="row"
-          justifyContent="flex-end"
-          alignItems="center"
-        >
-          {activeStep >= 0 && (
-            <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
-              Back
-            </Button>
-          )}
+        {coverLetter ? (
+          <Letter content={coverLetter}></Letter>
+        ) : (
+          <form method="post" noValidate>
+            {chooseContent(activeStep)}
+            <Grid
+              item
+              container
+              direction="row"
+              justifyContent="flex-end"
+              alignItems="center"
+            >
+              {activeStep >= 0 && activeStep < 2 && (
+                <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
+                  Back
+                </Button>
+              )}
 
-          <Button
-            variant="contained"
-            onClick={handleNext}
-            sx={{ mt: 3, ml: 1 }}
-          >
-            {activeStep < 0
-              ? "Inizia ora"
-              : activeStep === steps.length - 1
-              ? "Create letter"
-              : "Next"}
-          </Button>
-        </Grid>
+              <Button
+                variant="contained"
+                onClick={handleNext}
+                sx={{ mt: 3, ml: 1 }}
+                type="button"
+              >
+                {activeStep < 0
+                  ? "Inizia ora"
+                  : activeStep === steps.length - 1
+                  ? "Create letter"
+                  : "Next"}
+              </Button>
+            </Grid>
+          </form>
+        )}
       </Grid>
     </Paper>
   );

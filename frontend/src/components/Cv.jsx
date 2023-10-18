@@ -3,7 +3,7 @@ import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 
-function Cv() {
+function Cv(props) {
   return (
     <React.Fragment>
       <Grid
@@ -23,12 +23,15 @@ function Cv() {
 
         <Grid item xs={12}>
           <TextField
+            fullWidth
+            id="cv"
+            name="cv"
             required
             multiline
             rows={6}
             placeholder="Presentati e descrivi brevemente le tue esperienze"
             label="Le mie skill"
-            fullWidth
+            onChange={(e) => props.setContent(e.target.value)}
           />
         </Grid>
       </Grid>
