@@ -1,8 +1,9 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
 
-function Job() {
+function Start(props) {
   return (
     <React.Fragment>
       <Grid
@@ -23,8 +24,24 @@ function Job() {
           </Typography>
         </Grid>
       </Grid>
+      <Grid
+        item
+        container
+        direction="row"
+        justifyContent="flex-end"
+        alignItems="center"
+      >
+        <Button
+          variant="contained"
+          onClick={() => props.next()}
+          sx={{ mt: 3, ml: 1 }}
+          type="button"
+        >
+          Inizia ora
+        </Button>
+      </Grid>
     </React.Fragment>
   );
 }
 
-export default Job;
+export default Start;

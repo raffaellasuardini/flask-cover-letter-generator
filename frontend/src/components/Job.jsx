@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
 
 function Job(props) {
+  const [isFilled, setIsFilled] = useState(false);
   return (
     <React.Fragment>
       <Grid
@@ -30,9 +32,35 @@ function Job(props) {
             rows={6}
             placeholder="Inserisci il testo della job description per cui vuoi candidarti.
             "
-            onChange={(e) => props.setContent(e.target.value)}
+            onChange={(e) => {
+              props.setContent(e.target.value);
+              if (e.target.value.length > 1) {
+                setIsFilled(true);
+              } else {
+                setIsFilled(false);
+              }
+            }}
           />
         </Grid>
+      </Grid>
+      <Grid
+        item
+        container
+        direction="row"
+        justifyContent="flex-end"
+        alignItems="center"
+      >
+        <Button
+          disabled={!isFilled}
+          variant="contained"
+          onClick={() => {
+            props.next();
+          }}
+          sx={{ mt: 3, ml: 1 }}
+          type="button"
+        >
+          Next
+        </Button>
       </Grid>
     </React.Fragment>
   );
