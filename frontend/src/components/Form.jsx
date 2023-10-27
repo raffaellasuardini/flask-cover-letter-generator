@@ -20,9 +20,6 @@ function Form() {
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
-    if (activeStep === steps.length - 1) {
-      handleSubmit();
-    }
   };
 
   const handleBack = () => {
@@ -31,11 +28,11 @@ function Form() {
 
   function chooseContent(step) {
     if (step < 0) {
-      return <Start></Start>;
+      return <Start next={handleNext}></Start>;
     } else if (step === 0) {
-      return <Job setContent={setJobDescription}></Job>;
+      return <Job setContent={setJobDescription} next={handleNext}></Job>;
     } else if (step === 1) {
-      return <Cv setContent={setCurriculum}></Cv>;
+      return <Cv setContent={setCurriculum} back={handleBack}></Cv>;
     }
   }
 
@@ -76,34 +73,8 @@ function Form() {
         {coverLetter ? (
           <Letter content={coverLetter}></Letter>
         ) : (
-          <form method="post" noValidate>
+          <form method="post" onSubmit={handleSubmit}>
             {chooseContent(activeStep)}
-            <Grid
-              item
-              container
-              direction="row"
-              justifyContent="flex-end"
-              alignItems="center"
-            >
-              {activeStep >= 0 && activeStep < 2 && (
-                <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
-                  Back
-                </Button>
-              )}
-
-              <Button
-                variant="contained"
-                onClick={handleNext}
-                sx={{ mt: 3, ml: 1 }}
-                type="button"
-              >
-                {activeStep < 0
-                  ? "Inizia ora"
-                  : activeStep === steps.length - 1
-                  ? "Create letter"
-                  : "Next"}
-              </Button>
-            </Grid>
           </form>
         )}
       </Grid>
