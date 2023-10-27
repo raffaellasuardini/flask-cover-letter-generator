@@ -16,7 +16,8 @@ function Form() {
   const [activeStep, setActiveStep] = useState(-1);
   const [curriculum, setCurriculum] = useState("");
   const [jobDescription, setJobDescription] = useState("");
-  const [coverLetter, setCoverLetter] = useState("");
+  const [isDone, setIsDone] = useState(false);
+  const [paragraphs, setParagraphs] = useState([]);
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
@@ -41,13 +42,16 @@ function Form() {
 
     return fetch(FLASK_ENDPOINT + "/api/letter", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({ cv: curriculum, job: jobDescription }),
     })
-      .then((response) => response.text())
-      .then((response) => {
-        console.log(response);
-        setCoverLetter(response);
+      .then((data) => data.json())
+      .then((data) => {
+        setParagraphs(data.paragraphs);
+        setIsDone(true);
       })
 
       .catch((err) => console.error(err));
@@ -70,8 +74,8 @@ function Form() {
             ))}
           </Stepper>
         </Grid>
-        {coverLetter ? (
-          <Letter content={coverLetter}></Letter>
+        {isDone ? (
+          <Letter content={paragraphs}></Letter>
         ) : (
           <form method="post" onSubmit={handleSubmit}>
             {chooseContent(activeStep)}
