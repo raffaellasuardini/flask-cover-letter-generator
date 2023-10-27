@@ -37,7 +37,10 @@ function Form() {
     }
   }
 
-  function handleSubmit() {
+  function handleSubmit(event) {
+    event.preventDefault();
+
+    console.log("submit");
     const FLASK_ENDPOINT = "http://localhost:5000";
 
     return fetch(FLASK_ENDPOINT + "/api/letter", {
@@ -77,7 +80,7 @@ function Form() {
         {isDone ? (
           <Letter content={paragraphs}></Letter>
         ) : (
-          <form method="post" onSubmit={handleSubmit}>
+          <form method="post" onSubmit={(event) => handleSubmit(event)}>
             {chooseContent(activeStep)}
           </form>
         )}
