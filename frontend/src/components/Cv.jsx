@@ -33,9 +33,9 @@ function Cv(props) {
             rows={6}
             placeholder="Presentati e descrivi brevemente le tue esperienze"
             label="Le mie skill"
-            onChang={(e) => {
+            onChange={(e) => {
               props.setContent(e.target.value);
-              if (e.target.value.lenght > 1) {
+              if (e.target.value.length > 1) {
                 setIsFilled(true);
               } else {
                 setIsFilled(false);
