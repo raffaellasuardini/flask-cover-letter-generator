@@ -10,6 +10,7 @@ import Start from "./Start";
 import Job from "./Job";
 import Cv from "./Cv";
 import Letter from "./Letter";
+import Loader from "./Loader";
 
 function Form() {
   const steps = ["Job description", "Your skill"];
@@ -18,6 +19,7 @@ function Form() {
   const [jobDescription, setJobDescription] = useState("");
   const [isDone, setIsDone] = useState(false);
   const [paragraphs, setParagraphs] = useState([]);
+  const [waiting, setWaiting] = useState(false);
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
@@ -40,6 +42,7 @@ function Form() {
   function handleSubmit(event) {
     event.preventDefault();
 
+    setWaiting(true);
     console.log("submit");
     const FLASK_ENDPOINT = "http://localhost:5000";
 
@@ -51,9 +54,12 @@ function Form() {
       },
       body: JSON.stringify({ cv: curriculum, job: jobDescription }),
     })
-      .then((data) => data.json())
+      .then((data) => {
+        return data.json();
+      })
       .then((data) => {
         setParagraphs(data.paragraphs);
+        setWaiting(false);
         setIsDone(true);
       })
 
@@ -61,31 +67,41 @@ function Form() {
   }
 
   return (
-    <Paper variant="outlined" square={false}>
-      <Grid item xs={12} p={2}>
-        <Grid item>
-          <Typography component="h1" variant="h4" align="center">
-            Cover letter generator
-          </Typography>
+    <React.Fragment>
+      <Paper variant="outlined" square={false}>
+        <Grid item xs={12} p={2}>
+          <Grid item>
+            <Typography component="h1" variant="h4" align="center">
+              Cover letter generator
+            </Typography>
+          </Grid>
+          <Grid item pt={3} pb={5}>
+            <Stepper activeStep={activeStep}>
+              {steps.map((label) => (
+                <Step key={label}>
+                  <StepLabel>{label}</StepLabel>
+                </Step>
+              ))}
+            </Stepper>
+          </Grid>
+
+          {isDone ? (
+            <Letter content={paragraphs}></Letter>
+          ) : (
+            <form
+              method="post"
+              onSubmit={(event) => {
+                handleSubmit(event);
+                handleNext();
+              }}
+            >
+              {chooseContent(activeStep)}
+            </form>
+          )}
         </Grid>
-        <Grid item pt={3} pb={5}>
-          <Stepper activeStep={activeStep}>
-            {steps.map((label) => (
-              <Step key={label}>
-                <StepLabel>{label}</StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-        </Grid>
-        {isDone ? (
-          <Letter content={paragraphs}></Letter>
-        ) : (
-          <form method="post" onSubmit={(event) => handleSubmit(event)}>
-            {chooseContent(activeStep)}
-          </form>
-        )}
-      </Grid>
-    </Paper>
+      </Paper>
+      {waiting && <Loader></Loader>}
+    </React.Fragment>
   );
 }
 
