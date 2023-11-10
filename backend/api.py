@@ -29,7 +29,7 @@ class HelloCoverLetter(Resource):
         j_description = request.json["job"]
         cv = request.json["cv"]
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo-16k-0613",
+            model="gpt-4-1106-preview",
             messages=[
                 {'role': 'user', 'content': generate_prompt(
                     j_description, cv), }
